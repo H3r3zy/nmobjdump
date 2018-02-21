@@ -7,6 +7,7 @@
 
 #include <dirent.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "objdump.h"
 
 bool isFile(const char *name)
@@ -20,28 +21,29 @@ bool isFile(const char *name)
 	return true;
 }
 
-static bool isNotInMemory(EHdr64 *ehdr, long int f_size, void *test)
+static bool isNotInMemory(void *ehdr, long int f_size, void *test)
 {
 	if ((char *)test > (char *)ehdr + f_size)
 		return true;
 	return false;
 }
 
-bool isTrunced(EHdr64 *ehdr, SHdr64 *shdr, long int f_size)
+bool isTrunced(void *ehdr, void *shdr, long int f_size)
 {
 	int i = 0;
 	char *shtab = NULL;
 
 	if (isNotInMemory(ehdr, f_size, shdr))
 		return true;
-	shtab = (char *)ehdr + shdr[ehdr->e_shstrndx].sh_offset;
+	shtab = (char *)(ehdr + SHOFFSET(ehdr, shdr, SHSTRNDX(ehdr)));
 	if (isNotInMemory(ehdr, f_size, shtab))
 		return true;
-
-	while (i < ehdr->e_shnum) {
-		if (isNotInMemory(ehdr, f_size, &shdr[i]))
+	while (i < SHNUM(ehdr)) {
+		if (IS32(ehdr) && isNotInMemory(ehdr, f_size, &((SHdr32 *)shdr)[i]))
 			return true;
-		if (isNotInMemory(ehdr, f_size, &shtab[shdr[i].sh_name]))
+		if (IS64(ehdr) && isNotInMemory(ehdr, f_size, &((SHdr64 *)shdr)[i]))
+			return true;
+		if (isNotInMemory(ehdr, f_size, &shtab[SHNAME(ehdr, shdr, i)]))
 			return true;
 		i++;
 	}

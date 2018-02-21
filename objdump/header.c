@@ -30,7 +30,7 @@ const t_message machines[] = {
 	{-1, NULL}
 };
 
-void dump_header(EHdr64 *ehdr, SHdr64 *shdr, char const *shtab,
+void dump_header(void *ehdr, void *shdr, char const *shtab,
 	char const *const filename
 )
 {
@@ -39,11 +39,11 @@ void dump_header(EHdr64 *ehdr, SHdr64 *shdr, char const *shtab,
 	printf("\n%s:     file format elf64-x86-64\n", filename);
 	printf("architecture: ");
 	for (int i = 0; machines[i].name; i++) {
-		if (ehdr->e_machine == machines[i].id)
+		if (MACHINE(ehdr) == machines[i].id)
 			printf("%s", machines[i].name);
 	}
 	printf(", flags 0x%08lx:\n", flag);
 	dump_flag(flag);
 	printf("\n");
-	printf("start address 0x%016lx\n\n", ehdr->e_entry);
+	printf("start address 0x%016lx\n\n", ENTRY(ehdr));
 }

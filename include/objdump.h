@@ -45,24 +45,24 @@ typedef void * Header;
 #define IS64(header) \
 (((EHdr64 *)(header))->e_ident[EI_CLASS] & ELFCLASS64 ? (true) : (false))
 
+#define SHIS32(header) \
+(())
+
 #define CONTENT(data, offset)	\
 (((char *) (data)) + (offset))
 
 #define FILESIZE(fd)	\
 lseek(fd, 0, SEEK_END)
 
-#define SHTAB(data, shdr, ehdr) \
-((char *)(data) + (shdr)[(ehdr)->e_shstrndx].sh_offset)
-
 unsigned int calc_hex_digits(long int n);
-void dump_sections(void *, SHdr64 *, char const *, int);
+void dump_sections(void *, void *, char const *, int);
 bool isFile(const char *);
-bool isTrunced(EHdr64 *, SHdr64 *, long int);
+bool isTrunced(void *, void *, long int);
 void dump_flag(long int);
-long int flag_gestion(EHdr64 *, SHdr64 *, char const *);
-void dump_header(EHdr64 *, SHdr64 *, char const *, char const * const);
-bool isValid(EHdr64 *ehdr, int fd);
-void *getData(int fd);
+long int flag_gestion(void *, void *, char const *);
+void dump_header(void *, void *, char const *, char const * const);
+bool isValid(void *, int);
+void *getData(int);
 
 /*
 ** Errors
@@ -74,5 +74,84 @@ typedef enum errors {
 	TRUNCATED = 3,
 	NO_FILE = 4
 } errors;
+
+/*
+** Elf Value
+*/
+
+#define SIZEOFEHDR(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(sizeof(EHdr32)) : \
+(sizeof(EHdr64)))
+
+#define SHNUM(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(((EHdr32 *)(ehdr))->e_shnum) : \
+(((EHdr64 *)(ehdr))->e_shnum))
+
+#define SHOFF(ehdr) \
+((IS32(ehdr)) ? \
+(((EHdr32 *)(ehdr))->e_shoff) : \
+(((EHdr64 *)(ehdr))->e_shoff))
+
+#define PHNUM(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(((EHdr32 *)(ehdr))->e_phnum) : \
+(((EHdr64 *)(ehdr))->e_phnum))
+
+#define TYPE(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(((EHdr32 *)(ehdr))->e_type) : \
+(((EHdr64 *)(ehdr))->e_type))
+
+#define MACHINE(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(((EHdr32 *)(ehdr))->e_machine) : \
+(((EHdr64 *)(ehdr))->e_machine))
+
+#define ENTRY(ehdr) \
+((IS32((void *)(ehdr))) ? \
+(((EHdr32 *)(ehdr))->e_entry) : \
+(((EHdr64 *)(ehdr))->e_entry))
+
+#define SHSTRNDX(ehdr) \
+((IS32(ehdr)) ? \
+(((EHdr32 *)(ehdr))->e_shstrndx) : \
+(((EHdr64 *)(ehdr))->e_shstrndx))
+
+#define SHTAB(data, shdr, ehdr) \
+((IS32((void *)(ehdr))) ? \
+(long int)((char *)(data) + ((SHdr32 *)(shdr))[SHSTRNDX(ehdr)].sh_offset) : \
+(long int)((char *)(data) + ((SHdr64 *)(shdr))[SHSTRNDX(ehdr)].sh_offset))
+
+#define SHNAME(ehdr, shdr, idx) \
+((IS32((void *)(ehdr))) ? \
+(((SHdr32 *)(shdr))[idx].sh_name) : \
+(((SHdr64 *)(shdr))[idx].sh_name))
+
+#define SHOFFSET(ehdr, shdr, idx) \
+((IS32((void *)(ehdr))) ? \
+(((SHdr32 *)(shdr))[(unsigned int)(idx)].sh_offset) : \
+(((SHdr64 *)(shdr))[(unsigned int)(idx)].sh_offset))
+
+#define SHSIZE(ehdr, shdr, idx) \
+((IS32((void *)(ehdr))) ? \
+(((SHdr32 *)(shdr))[idx].sh_size) : \
+(((SHdr64 *)(shdr))[idx].sh_size))
+
+#define SHADDR(ehdr, shdr, idx) \
+((IS32((void *)(ehdr))) ? \
+(((SHdr32 *)(shdr))[idx].sh_addr) : \
+(((SHdr64 *)(shdr))[idx].sh_addr))
+
+#define SHTYPE(ehdr, shdr, idx) \
+((IS32((ehdr))) ? \
+(((SHdr32 *)(shdr))[idx].sh_type) : \
+(((SHdr64 *)(shdr))[idx].sh_type))
+
+#define SHFLAGS(ehdr, shdr, idx) \
+((IS32((ehdr))) ? \
+(((SHdr32 *)(shdr))[idx].sh_flags) : \
+(((SHdr64 *)(shdr))[idx].sh_flags))
 
 #endif //PSU_2017_NMOBJDUMP_OBJDUMP_H

@@ -30,9 +30,9 @@ unsigned int calc_hex_digits(long int n)
 	return (digits);
 }
 
-bool isValid(EHdr64 *ehdr, int fd)
+bool isValid(void *ehdr, int fd)
 {
-	if ((unsigned long int)FILESIZE(fd) < sizeof(EHdr64))
+	if ((unsigned long int)FILESIZE(fd) < sizeof(EHdr32))
 		return false;
 	return (VALIDMAG(ehdr) == true && VALIDVERSION64(ehdr) == true) ?
 		true : false;

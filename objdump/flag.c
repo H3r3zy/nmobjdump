@@ -10,65 +10,59 @@
 #include "objdump.h"
 #include "flag.h"
 
-const t_message flags[] = {
-	{HAS_RELOC, "HAS_RELOC"},
-	{EXEC_P, "EXEC_P"},
-	{HAS_SYMS, "HAS_SYMS"},
-	{HAS_DEBUG, "HAS_DEBUG"},
-	{DYNAMIC, "DYNAMIC"},
-	{D_PAGED, "D_PAGED"},
-	{HAS_LINENO, "HAS_LINENO"},
-	{HAS_LOCALS, "HAS_LOCALS"},
-	{WP_TEXT, "WP_TEXT"},
-	{-1, NULL}
-};
+const t_message flags[] = {{HAS_RELOC, "HAS_RELOC"}, {EXEC_P, "EXEC_P"},
+	{HAS_SYMS, "HAS_SYMS"}, {HAS_DEBUG, "HAS_DEBUG"}, {DYNAMIC, "DYNAMIC"},
+	{D_PAGED, "D_PAGED"}, {HAS_LINENO, "HAS_LINENO"},
+	{HAS_LOCALS, "HAS_LOCALS"}, {WP_TEXT, "WP_TEXT"}, {-1, NULL}};
 
-static bool hasrela(SHdr64 *shdr, char const *shtab, unsigned int shnum)
+static bool hasrela(void *ehdr, void *shdr, char const *shtab,
+	unsigned int shnum
+)
 {
 	for (unsigned int i = 0; i < shnum; i++) {
-		if ((shdr[i].sh_type == SHT_RELA ||
-			shdr[i].sh_type == SHT_REL) &&
-			strcmp(&shtab[shdr[i].sh_name], ".rela.plt") != 0 &&
-			strcmp(&shtab[shdr[i].sh_name], ".rel.plt") != 0 &&
-			strcmp(&shtab[shdr[i].sh_name], ".rela.dyn") != 0 &&
-			strcmp(&shtab[shdr[i].sh_name], ".rel.syn") != 0)
+		if ((SHTYPE(ehdr, shdr, i) == SHT_RELA ||
+			SHTYPE(ehdr, shdr, i) == SHT_REL) &&
+			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rela.plt") &&
+			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rel.plt") &&
+			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rela.dyn") &&
+			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rel.syn"))
 			return true;
 	}
 	return false;
 }
 
-static bool hasdebug(SHdr64 *shdr, unsigned int shnum)
+static bool hasdebug(void *ehdr, void *shdr, unsigned int shnum)
 {
 	for (unsigned int i = 0; i < shnum; i++) {
-		if (shdr[i].sh_type == SHT_MIPS_DEBUG)
+		if (SHTYPE(ehdr, shdr, i) == SHT_MIPS_DEBUG)
 			return true;
 	}
 	return false;
 }
 
-static bool hassyms(SHdr64 *shdr, unsigned int shnum)
+static bool hassyms(void *ehdr, void *shdr, unsigned int shnum)
 {
 	for (unsigned int i = 0; i < shnum; i++) {
-		if (shdr[i].sh_type == SHT_SYMTAB)
+		if (SHTYPE(ehdr, shdr, i) == SHT_SYMTAB)
 			return true;
 	}
 	return false;
 }
 
-long int flag_gestion(EHdr64 *ehdr, SHdr64 *shdr, char const *shtab)
+long int flag_gestion(void *ehdr, void *shdr, char const *shtab)
 {
 	long int flag = BFD_NO_FLAGS;
-	if (ehdr->e_phnum)
+	if (PHNUM(ehdr))
 		flag += D_PAGED;
-	if (ehdr->e_type == ET_EXEC)
+	if (TYPE(ehdr) == ET_EXEC)
 		flag += EXEC_P;
-	if (ehdr->e_type == ET_DYN)
+	if (TYPE(ehdr) == ET_DYN)
 		flag += DYNAMIC;
-	if (hasrela(shdr, shtab, ehdr->e_shnum))
+	if (hasrela(ehdr, shdr, shtab, SHNUM(ehdr)))
 		flag += HAS_RELOC;
-	if (hasdebug(shdr, ehdr->e_shnum))
+	if (hasdebug(ehdr, shdr, SHNUM(ehdr)))
 		flag += HAS_DEBUG;
-	if (hassyms(shdr, ehdr->e_shnum))
+	if (hassyms(ehdr, shdr, SHNUM(ehdr)))
 		flag += HAS_SYMS;
 	return flag;
 }
