@@ -35,8 +35,9 @@ void dump_header(void *ehdr, void *shdr, char const *shtab,
 )
 {
 	long int flag = flag_gestion(ehdr, shdr, shtab);
+	char *format = (IS64(ehdr)) ? ("elf64-x86-64") : ("elf32-i386");
 
-	printf("\n%s:     file format elf64-x86-64\n", filename);
+	printf("\n%s:     file format %s\n", filename, format);
 	printf("architecture: ");
 	for (int i = 0; machines[i].name; i++) {
 		if (MACHINE(ehdr) == machines[i].id)
