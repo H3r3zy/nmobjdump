@@ -49,4 +49,8 @@ debug: CFLAGS += -ggdb3
 
 debug: re
 
-.PHONY: all clean fclean re debug $(NAME1) $(NAME2) nm objdump
+32: CFLAGS += -m32
+
+32: re
+
+.PHONY: all clean fclean re debug $(NAME1) $(NAME2) nm objdump 32

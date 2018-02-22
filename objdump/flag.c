@@ -25,7 +25,7 @@ static bool hasrela(void *ehdr, void *shdr, char const *shtab,
 			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rela.plt") &&
 			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rel.plt") &&
 			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rela.dyn") &&
-			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rel.syn"))
+			strcmp(&shtab[SHNAME(ehdr, shdr, i)], ".rel.dyn"))
 			return true;
 	}
 	return false;

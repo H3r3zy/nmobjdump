@@ -12,7 +12,7 @@ const t_message machines[] = {
 	{EM_NONE, "None"},
 	{EM_M32, "WE32100"},
 	{EM_SPARC, "Sparc"},
-	{EM_386, "Intel 80386"},
+	{EM_386, "i386"},
 	{EM_68K, "MC68000"},
 	{EM_88K, "MC88000"},
 	{EM_860, "Intel 80860"},
@@ -46,5 +46,9 @@ void dump_header(void *ehdr, void *shdr, char const *shtab,
 	printf(", flags 0x%08lx:\n", flag);
 	dump_flag(flag);
 	printf("\n");
-	printf("start address 0x%016lx\n\n", ENTRY(ehdr));
+	if (IS64(ehdr)) {
+		printf("start address 0x%016lx\n\n", ENTRY(ehdr));
+	} else {
+		printf("start address 0x%08lx\n\n", ENTRY(ehdr));
+	}
 }

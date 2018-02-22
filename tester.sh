@@ -78,6 +78,9 @@ load_test "my_objdump" "my_objdump" 0
 objdump -fs > $testfile 2>&1
 load_test "my_objdump no arg" "" 0
 
+objdump -fs .test.binary32 > $testfile 2>&1
+load_test "my_objdump 32 bit" ".test.binary32" 0
+
 echo ""
 echo "Final mark: $mark/$maxmark"
 echo "Tester by Sahel Lucas--Saoudi"
