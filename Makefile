@@ -33,6 +33,10 @@ $(NAME1):	$(OBJOBJ)
 #$(NAME2):	$(NMOBJ)
 #	$(CC) $(NMOBJ) -o $(NAME2) $(CFLAGS)
 
+objdump:	$(NAME1)
+
+nm:	
+
 clean:
 	$(RM) $(OBJOBJ) $(NMOBJ)
 
@@ -45,4 +49,4 @@ debug: CFLAGS += -ggdb3
 
 debug: re
 
-.PHONY: all clean fclean re debug $(NAME1) $(NAME2)
+.PHONY: all clean fclean re debug $(NAME1) $(NAME2) nm objdump

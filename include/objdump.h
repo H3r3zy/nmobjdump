@@ -45,9 +45,6 @@ typedef void * Header;
 #define IS64(header) \
 (((EHdr64 *)(header))->e_ident[EI_CLASS] & ELFCLASS64 ? (true) : (false))
 
-#define SHIS32(header) \
-(())
-
 #define CONTENT(data, offset)	\
 (((char *) (data)) + (offset))
 
