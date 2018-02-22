@@ -35,7 +35,7 @@ $(NAME1):	$(OBJOBJ)
 
 objdump:	$(NAME1)
 
-nm:	
+nm:	$(NAME1)
 
 clean:
 	$(RM) $(OBJOBJ) $(NMOBJ)
