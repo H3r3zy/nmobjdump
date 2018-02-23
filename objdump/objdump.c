@@ -21,15 +21,14 @@ const t_message messages[] = {{SUCCESS, "Success"},
 	{DIRECTORY, "%s: Warning: '%s' is a directory\n"},
 	{NOT_RECOGNIZED, "%s: %s: File format not recognized\n"},
 	{TRUNCATED, "%s: %s: File truncated\n"},
-	{NO_FILE, "%s: '%s': No such file\n"}
-};
+	{NO_FILE, "%s: '%s': No such file\n"}};
 
 static int dump_error(errors error, int return_value, char const *const av0,
 	char const *const filename
 )
 {
 	if (error) {
-		printf(messages[error].name, av0, filename);
+		fprintf(stderr, messages[error].name, av0, filename);
 		return_value = error_return;
 	}
 	return return_value;
@@ -40,22 +39,22 @@ static errors manage_file(char const *const filename)
 	int fd;
 	char *data = NULL;
 	char *ehdr = NULL;
-	void *shdr = NULL;
+	ptr shdr = NULL;
 
-	if (!isFile(filename))
+	if (!is_file(filename))
 		return DIRECTORY;
 	fd = open(filename, O_RDONLY);
-	data = getData(fd);
+	data = get_data(fd);
 	if (!data)
 		return NO_FILE;
 	ehdr = data;
-	if (!isValid(ehdr, fd))
+	if (!is_valid(ehdr, fd))
 		return NOT_RECOGNIZED;
 	shdr = data + SHOFF(ehdr);
-	if (isTrunced(ehdr, shdr, FILESIZE(fd)))
+	if (is_truncated(ehdr, shdr, FILESIZE(fd)))
 		return TRUNCATED;
-	dump_header(ehdr, shdr, (void *)SHTAB(data, shdr, ehdr), filename);
-	dump_sections(data, shdr, (void *)SHTAB(data, shdr, ehdr), SHNUM(ehdr));
+	dump_header(ehdr, shdr, (ptr)SHTAB(data, shdr, ehdr), filename);
+	dump_sections(data, shdr, (ptr)SHTAB(data, shdr, ehdr), SHNUM(ehdr));
 	return SUCCESS;
 }
 

@@ -22,6 +22,12 @@ OBJSRC	=	objdump/dump.c	\
 
 OBJOBJ	=	$(OBJSRC:.c=.o)
 
+NMSRC	=	nm/nm.c	\
+		objdump/utils.c	\
+		objdump/file.c
+
+NMOBJ	=	$(NMSRC:.c=.o)
+
 CFLAGS	=	-I include
 CFLAGS	+=	-W -Wall -Wextra
 
@@ -30,12 +36,12 @@ all:	$(NAME1) $(NAME2)
 $(NAME1):	$(OBJOBJ)
 	$(CC) $(OBJOBJ) -o $(NAME1) $(CFLAGS)
 
-#$(NAME2):	$(NMOBJ)
-#	$(CC) $(NMOBJ) -o $(NAME2) $(CFLAGS)
+$(NAME2):	$(NMOBJ)
+	$(CC) $(NMOBJ) -o $(NAME2) $(CFLAGS)
 
 objdump:	$(NAME1)
 
-nm:	$(NAME1)
+nm:	$(NAME2)
 
 clean:
 	$(RM) $(OBJOBJ) $(NMOBJ)

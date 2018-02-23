@@ -5,13 +5,14 @@
 ** Created by sahel.lucas-saoudi@epitech.eu,
 */
 
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "objdump.h"
 
-static bool section_displayable(void *data, void *shdr, char const *shtab, int idx)
+static bool section_displayable(void *data, void *shdr, char const *shtab,
+	int idx
+)
 {
 	int type = SHTYPE(data, shdr, idx);
 	const char *name = &shtab[SHNAME(data, shdr, idx)];

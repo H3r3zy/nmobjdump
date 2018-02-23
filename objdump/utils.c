@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "objdump.h"
 
-void *getData(int fd)
+void *get_data(int fd)
 {
 	void *data = NULL;
 
@@ -30,10 +30,10 @@ unsigned int calc_hex_digits(long int n)
 	return (digits);
 }
 
-bool isValid(void *ehdr, int fd)
+bool is_valid(void *ehdr, int fd)
 {
 	if ((unsigned long int)FILESIZE(fd) < sizeof(EHdr32))
 		return false;
-	return (VALIDMAG(ehdr) == true && VALIDVERSION64(ehdr) == true) ?
-		true : false;
+	return (VALIDMAG(ehdr) == true && VALIDVERSION(ehdr) == true) ? true :
+		false;
 }
