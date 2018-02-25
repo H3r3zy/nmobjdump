@@ -5,20 +5,19 @@
 ** Created by sahel.lucas-saoudi@epitech.eu,
 */
 
-#include <string.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include "nm.h"
 
-const int error_return = 84;
+static const int error_return = 84;
 
-const int success_return = 0;
+static const int success_return = 0;
 
-const char *const default_file = "a.out";
+static const char *const default_file = "a.out";
 
-const t_message messages[] = {
+static const t_message messages[] = {
 	{SUCCESS, "Success"},
 	{DIRECTORY, "%s: Warning: '%s' is a directory\n"},
 	{NOT_RECOGNIZED, "%s: %s: File format not recognized\n"},
@@ -38,7 +37,7 @@ static int dump_error(errors error, int return_value, char const *const av0,
 	return return_value;
 }
 
-unsigned int getSymTabSection(void *const ehdr, void *const shdr,
+static int getSymTabSection(void const *const ehdr, void const *const shdr,
 	unsigned int idx
 )
 {
@@ -49,40 +48,40 @@ unsigned int getSymTabSection(void *const ehdr, void *const shdr,
 			return i;
 		i++;
 	}
-	return NO_SYMTAB;
+	return -1;
+}
+
+static errors dump_symtab(void const *const ehdr, void const *const shdr) {
+	int i = getSymTabSection(ehdr, shdr, 0);
+
+	if (i == -1)
+		return NO_SYMTAB;
+	while (i != -1) {
+		dump_symbols(ehdr, shdr, i);
+		i++;
+		i = getSymTabSection(ehdr, shdr, i);
+	}
+	return SUCCESS;
 }
 
 static errors manage_file(char const *const filename, int max_idx)
 {
 	int fd;
-	char *data = NULL;
 	char *ehdr = NULL;
 	void *shdr = NULL;
 
 	if (!is_file(filename))
 		return DIRECTORY;
 	fd = open(filename, O_RDONLY);
-	data = get_data(fd);
-	if (!data)
-		return NO_FILE;
-	ehdr = data;
-	if (!is_valid(ehdr, fd))
-		return NOT_RECOGNIZED;
-	shdr = data + SHOFF(ehdr);
+	ehdr = get_data(fd);
+	if (!ehdr || !is_valid(ehdr, fd))
+		return !ehdr ? NO_FILE : NOT_RECOGNIZED;
+	shdr = ehdr + SHOFF(ehdr);
 	if (is_truncated(ehdr, shdr, FILESIZE(fd)))
 		return TRUNCATED;
-	unsigned int i = 0;
 	if (max_idx > 2)
 		printf("\n%s:\n", filename);
-	i = getSymTabSection(ehdr, shdr, i);
-	if (i == NO_SYMTAB)
-		return NO_SYMTAB;
-	while (i != NO_SYMTAB) {
-		dump_symbols(ehdr, shdr, i);
-		i++;
-		i = getSymTabSection(ehdr, shdr, i);
-	}
-	return SUCCESS;
+	return dump_symtab(ehdr, shdr);
 }
 
 int main(int ac, char **av)

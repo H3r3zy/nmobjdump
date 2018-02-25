@@ -82,6 +82,21 @@ objdump -fs .test.binary32 > $testfile 2>&1
 load_test "my_objdump 32 bit" ".test.binary32" 0
 
 echo ""
+echo "Test nm all lib of docker"
+
+echo "cd work && nm /usr/bin/* 2> /dev/null | sort > .test.nm && ./my_nm /usr/bin/* 2> /dev/null | sort > .test.my_nm && diff .test.nm .test.my_nm" > $testfile
+docker run -it -v `pwd`:/work epitechcontent/epitest-docker bash /work/$testfile
+
+if [ $? -eq 0 ]
+then
+	echo -e "\033[32mOK\033[00m"
+    ((mark++))
+else
+    echo -e "\033[31mKO\033[00m"
+fi
+((maxmark++))
+
+echo ""
 echo "Final mark: $mark/$maxmark"
 echo "Tester by Sahel Lucas--Saoudi"
 
@@ -90,3 +105,5 @@ rm .test.not_recognize
 rm -f $testfile
 rm .test.empty
 rm -rf .test.directory
+rm .test.nm
+rm .test.my_nm

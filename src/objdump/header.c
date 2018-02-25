@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include "objdump.h"
 
-const char * const elf64 = "elf64-x86-64";
-const char * const elf32 = "elf32-i386";
-const t_message machines[] = {
+static const char * const elf64 = "elf64-x86-64";
+
+static const char * const elf32 = "elf32-i386";
+
+static const t_message machines[] = {
 	{EM_NONE, "None"},
 	{EM_M32, "WE32100"},
 	{EM_SPARC, "Sparc"},

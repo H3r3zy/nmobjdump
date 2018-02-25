@@ -10,7 +10,7 @@
 #include "objdump.h"
 #include "flag.h"
 
-const t_message flags[] = {
+static const t_message flags[] = {
 	{HAS_RELOC, "HAS_RELOC"},
 	{EXEC_P, "EXEC_P"},
 	{HAS_SYMS, "HAS_SYMS"},

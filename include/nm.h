@@ -11,6 +11,8 @@
 #include "message.h"
 #include "elf_file.h"
 
+extern const unsigned int unknown;
+
 void dump_symbols(void const *const ehdr, void const *const shdr, int i);
 unsigned int get_type(void const *const ehdr, void const *const shdr,
 	void const *const symbol);
@@ -24,6 +26,30 @@ typedef struct {
 	bool (*func)(void const *const, void const *const,
 		void const *const, unsigned int);
 } type;
+
+bool is_undefined(void const *const ehdr,
+	void const *const shdr __attribute__((unused)),
+	void const *const symbol, unsigned int ret);
+
+bool is_common(void const *const ehdr,
+	void const *const shdr __attribute__((unused)),
+	void const *const symbol, unsigned int ret);
+
+bool is_absolute(void const *const ehdr,
+	void const *const shdr __attribute__((unused)),
+	void const *const symbol, unsigned int ret);
+
+bool is_bss(void const *const ehdr, void const *const shdr,
+	void const *const symbol, unsigned int ret);
+
+bool is_readonly(void const *const ehdr, void const *const shdr,
+	void const *const symbol, unsigned int ret);
+
+bool is_data(void const *const ehdr, void const *const shdr,
+	void const *const symbol, unsigned int ret);
+
+bool is_text(void const *const ehdr, void const *const shdr,
+	void const *const symbol, unsigned int ret);
 
 /*
 ** Errors

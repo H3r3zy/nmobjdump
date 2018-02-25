@@ -26,7 +26,14 @@ NMSRC	=	src/nm/nm.c	\
 		src/nm/dump.c	\
 		src/nm/type.c	\
 		src/utils.c	\
-		src/file.c
+		src/file.c	\
+		src/nm/type_check/bss.c	\
+		src/nm/type_check/undefined.c	\
+		src/nm/type_check/absolute.c	\
+		src/nm/type_check/common.c	\
+		src/nm/type_check/data.c	\
+		src/nm/type_check/readonly.c	\
+		src/nm/type_check/text.c
 
 NMOBJ	=	$(NMSRC:.c=.o)
 
