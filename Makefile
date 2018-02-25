@@ -13,18 +13,20 @@ CC	=	gcc
 
 RM	=	rm -rf
 
-OBJSRC	=	objdump/dump.c	\
-		objdump/objdump.c	\
-		objdump/flag.c	\
-		objdump/file.c	\
-		objdump/header.c	\
-		objdump/utils.c
+OBJSRC	=	src/objdump/dump.c	\
+		src/objdump/objdump.c	\
+		src/objdump/flag.c	\
+		src/file.c	\
+		src/objdump/header.c	\
+		src/utils.c
 
 OBJOBJ	=	$(OBJSRC:.c=.o)
 
-NMSRC	=	nm/nm.c	\
-		objdump/utils.c	\
-		objdump/file.c
+NMSRC	=	src/nm/nm.c	\
+		src/nm/dump.c	\
+		src/nm/type.c	\
+		src/utils.c	\
+		src/file.c
 
 NMOBJ	=	$(NMSRC:.c=.o)
 

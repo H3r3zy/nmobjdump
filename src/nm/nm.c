@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <elf.h>
 #include <ctype.h>
 #include "nm.h"
 
@@ -19,12 +18,14 @@ const int success_return = 0;
 
 const char *const default_file = "a.out";
 
-const t_message messages[] = {{SUCCESS, "Success"},
+const t_message messages[] = {
+	{SUCCESS, "Success"},
 	{DIRECTORY, "%s: Warning: '%s' is a directory\n"},
 	{NOT_RECOGNIZED, "%s: %s: File format not recognized\n"},
 	{TRUNCATED, "%s: %s: File truncated\n"},
 	{NO_FILE, "%s: '%s': No such file\n"},
-	{NO_SYMTAB, "%s: %s: No symbols\n"}};
+	{NO_SYMTAB, "%s: %s: No symbols\n"}
+};
 
 static int dump_error(errors error, int return_value, char const *const av0,
 	char const *const filename
@@ -49,67 +50,6 @@ unsigned int getSymTabSection(void *const ehdr, void *const shdr,
 		i++;
 	}
 	return NO_SYMTAB;
-}
-
-bool displayable(void *ehdr, void *symbol)
-{
-	int type = STTYPE(ehdr, symbol);
-
-	if (type == STT_FILE)
-		return false;
-	if ((STVALUE(ehdr, symbol) && STSIZE(ehdr, symbol)) ||
-		STNAME(ehdr, symbol))
-		return true;
-	return false;
-}
-
-static int dump_type(void *const ehdr, void *const shdr, void *const symbol)
-{
-	int ret = '?';
-
-	if (STSHNDX(ehdr, symbol) == SHN_UNDEF)
-		return 'u';
-	if (STBIND(ehdr, symbol) == STB_WEAK) {
-		ret = STTYPE(ehdr, symbol) == STT_OBJECT ? 'v' : 'w';
-		ret = STVALUE(ehdr, symbol) ? toupper(ret) : ret;
-		return ret;
-	}
-	ret = ISUNDEFINED(ehdr, symbol, ret);
-	ret = ISCOMMON(ehdr, symbol, ret);
-	ret = ISABSOLUTE(ehdr, symbol, ret);
-	ret = ISBSS(ehdr, shdr, symbol, ret);
-	ret = ISREADONLY(ehdr, shdr, symbol, ret);
-	ret = ISDATA(ehdr, shdr, symbol, ret);
-	ret = ISTEXT(ehdr, shdr, symbol, ret);
-	if (STBIND(ehdr, symbol) == STB_GLOBAL)
-		return toupper(ret);
-	return ret;
-}
-
-void dump_symbol(void *const ehdr, void *const shdr, int i)
-{
-	void *symbol = (void *)((char *)ehdr + SHOFFSET(ehdr, shdr, i));
-	void *end = (void *)((char *)symbol + SHSIZE(ehdr, shdr, i));
-	int link = SHLINK(ehdr, shdr, i);
-	long unsigned int value = 0;
-	char *strtab = (char *)ehdr + SHOFFSET(ehdr, shdr, link);
-
-	while (symbol < end) {
-		if (displayable(ehdr, symbol) == true) {
-			value = STVALUE(ehdr, symbol);
-			if (IS64(ehdr) == true && value != 0)
-				printf("%016lx ", value);
-			else if (IS32(ehdr) == true && value != 0)
-				printf("%08lx ", value);
-			else if (IS64(ehdr) == true)
-				printf("                 ");
-			else
-				printf("         ");
-			printf("%c", dump_type(ehdr, shdr, symbol));
-			printf(" %s\n", &strtab[STNAME(ehdr, symbol)]);
-		}
-		symbol = STNEXT(ehdr, symbol);
-	}
 }
 
 static errors manage_file(char const *const filename, int max_idx)
@@ -138,7 +78,7 @@ static errors manage_file(char const *const filename, int max_idx)
 	if (i == NO_SYMTAB)
 		return NO_SYMTAB;
 	while (i != NO_SYMTAB) {
-		dump_symbol(ehdr, shdr, i);
+		dump_symbols(ehdr, shdr, i);
 		i++;
 		i = getSymTabSection(ehdr, shdr, i);
 	}

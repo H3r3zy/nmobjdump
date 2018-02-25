@@ -20,14 +20,28 @@ void *get_data(int fd)
 	return data;
 }
 
-unsigned int calc_hex_digits(long int n)
+static unsigned int powi(int n, unsigned int p) {
+	unsigned int ret = 1;
+
+	while (p) {
+		ret *= n;
+		p--;
+	}
+	return ret;
+}
+
+unsigned int calc_hex_digits(size_t n)
 {
 	unsigned int digits;
+	unsigned int i;
 
-	digits = sizeof(n);
-	while (digits > 0 && !((0xf << ((digits - 1) * 4)) & n))
-		digits--;
-	return (digits);
+	digits = 0xFFFF;
+	i = 4;
+	while (digits < n) {
+		i++;
+		digits += powi(0xF, i);
+	}
+	return (i);
 }
 
 bool is_valid(void *ehdr, int fd)

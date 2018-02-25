@@ -8,20 +8,21 @@
 #ifndef PSU_2017_NMOBJDUMP_OBJDUMP_H
 #define PSU_2017_NMOBJDUMP_OBJDUMP_H
 
-#include <elf.h>
+#include <stdio.h>
 #include "message.h"
 #include "elf_file.h"
 
-typedef void * ptr;
+typedef void *ptr;
 
-unsigned int calc_hex_digits(long int n);
+unsigned int calc_hex_digits(size_t n);
 
 long int flag_gestion(void *, void *, char const *);
 
 /*
 ** Dump
 */
-void dump_sections(void *, void *, char const *, int);
+void dump_sections(void const *const, void const *const, char const *const, int
+);
 
 void dump_flag(long int);
 

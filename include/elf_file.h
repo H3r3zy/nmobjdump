@@ -8,6 +8,8 @@
 #ifndef PSU_2017_NMOBJDUMP_ELF_FILE_H
 #define PSU_2017_NMOBJDUMP_ELF_FILE_H
 
+#include <string.h>
+#include <elf.h>
 #include "bool.h"
 
 /*
@@ -206,52 +208,10 @@ lseek(fd, 0, SEEK_END)
 (((Sym32 *)(symbol))->st_shndx) : \
 (((Sym64 *)(symbol))->st_shndx))
 
-/*
-** Elf_Sym Type
-*/
-
-#define ISUNDEFINED(ehdr, symbol, ret) \
-((STVALUE(ehdr, symbol) == 0 && (ret) == '?') ? \
-('u') : (ret))
-
-#define ISCOMMON(ehdr, symbol, ret) \
-((STSHNDX(ehdr, symbol) == SHN_COMMON && (ret) == '?') ? \
-('c') : (ret))
-
-#define ISABSOLUTE(ehdr, symbol, ret) \
-((STSHNDX(ehdr, symbol) == SHN_ABS && (ret) == '?') ? \
-('a') : (ret))
-
-#define ISBSS(ehdr, shdr, symbol, ret) \
-(((((SHTYPE(ehdr, shdr, STSHNDX(ehdr, symbol)) == SHT_NOBITS)) && \
-(((SHFLAGS(ehdr, shdr, STSHNDX(ehdr, symbol)) == (SHF_ALLOC | SHF_WRITE)))) && \
-(((ret) == '?'))) || \
-(0 == strncmp(SECTIONNAME(ehdr, shdr, symbol), ".bss", 4)) || \
-(0 == strncmp(SECTIONNAME(ehdr, shdr, symbol), ".tbss", 5))) ? \
-('b') : (ret))
-
-#define ISREADONLY(ehdr, shdr, symbol, ret) \
-((((SHTYPE(ehdr, shdr, STSHNDX(ehdr, symbol)) == SHT_PROGBITS)) && \
-((((SHFLAGS(ehdr, shdr, STSHNDX(ehdr, symbol)) == SHF_ALLOC))) || \
-(((SHFLAGS(ehdr, shdr, STSHNDX(ehdr, symbol)) == 0)))) && \
-(((ret) == '?'))) ? \
-('r') : (ret))
-
-#define ISDATA(ehdr, shdr, symbol, ret) \
-((((((SHTYPE(ehdr, shdr, STSHNDX(ehdr, symbol)) == SHT_PROGBITS)) && \
-(((SHFLAGS(ehdr, shdr, STSHNDX(ehdr, symbol)) == (SHF_ALLOC | SHF_WRITE))))) || \
-((SHTYPE(ehdr, shdr, STSHNDX(ehdr, symbol)) & SHT_NOBITS) == 0)) && \
-((ret) == '?')) ? \
-('d') : (ret))
-
-#define ISTEXT(ehdr, shdr, symbol, ret) \
-((((((SHTYPE(ehdr, shdr, STSHNDX(ehdr, symbol)) == SHT_PROGBITS)) && \
-(((SHFLAGS(ehdr, shdr, STSHNDX(ehdr, symbol)) == (SHF_ALLOC | SHF_EXECINSTR))))) \
-&& (ret) == '?') || \
-(0 == strncmp(SECTIONNAME(ehdr, shdr, symbol), ".init", 5)) || \
-(0 == strncmp(SECTIONNAME(ehdr, shdr, symbol), ".fini", 5)) || \
-(0 == strncmp(SECTIONNAME(ehdr, shdr, symbol), ".text", 5)))  ? \
-('t') : (ret))
+#define STINFO(ehdr, symbol) \
+((IS32(ehdr)) ? \
+(((Sym32 *)(symbol))->st_info) : \
+(((Sym64 *)(symbol))->st_info))
 
 #define SECTIONNAME(ehdr, shdr, symbol) \
 (&(((char *)(ehdr) + SHOFFSET(ehdr, shdr, SHSTRNDX(ehdr))) \

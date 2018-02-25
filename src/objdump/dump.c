@@ -10,8 +10,8 @@
 #include <ctype.h>
 #include "objdump.h"
 
-static bool section_displayable(void *data, void *shdr, char const *shtab,
-	int idx
+static bool section_displayable(void const *const data, void const *const shdr,
+	char const *const shtab, int idx
 )
 {
 	int type = SHTYPE(data, shdr, idx);
@@ -30,7 +30,7 @@ static bool section_displayable(void *data, void *shdr, char const *shtab,
 	return (true);
 }
 
-static void dump_hex(char const *data, long unsigned int offset,
+static void dump_hex(char const *const data, long unsigned int offset,
 	long unsigned int size
 )
 {
@@ -47,7 +47,7 @@ static void dump_hex(char const *data, long unsigned int offset,
 	}
 }
 
-static void dump_ascii(char const *data, long unsigned int offset,
+static void dump_ascii(char const *const data, long unsigned int offset,
 	long unsigned int size
 )
 {
@@ -69,7 +69,7 @@ static void dump_ascii(char const *data, long unsigned int offset,
 	}
 }
 
-static void dump_section(void *data, void *shdr, int i)
+static void dump_section(void const *const data, void const *const shdr, int i)
 {
 	long unsigned int offset = 0;
 	int padding = 0;
@@ -89,7 +89,9 @@ static void dump_section(void *data, void *shdr, int i)
 	}
 }
 
-void dump_sections(void *data, void *shdr, char const *shtab, int shnum)
+void dump_sections(void const *const data, void const *const shdr,
+	char const *const shtab, int shnum
+)
 {
 	int i = 0;
 

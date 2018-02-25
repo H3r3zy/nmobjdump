@@ -8,9 +8,22 @@
 #ifndef PSU_2017_NMOBJDUMP_NM_H
 #define PSU_2017_NMOBJDUMP_NM_H
 
-#include <elf.h>
 #include "message.h"
 #include "elf_file.h"
+
+void dump_symbols(void const *const ehdr, void const *const shdr, int i);
+unsigned int get_type(void const *const ehdr, void const *const shdr,
+	void const *const symbol);
+
+/*
+** Type gestion
+*/
+
+typedef struct {
+	unsigned int key;
+	bool (*func)(void const *const, void const *const,
+		void const *const, unsigned int);
+} type;
 
 /*
 ** Errors

@@ -30,26 +30,19 @@ static bool is_not_in_memory(void *ehdr, long int f_size, void *test)
 bool is_truncated(void *ehdr, void *shdr, long int f_size)
 {
 	int i = 0;
-	char *shtab = NULL;
 
 	if (is_not_in_memory(ehdr, f_size, shdr))
 		return true;
-	shtab = (char *)(ehdr + SHOFFSET(ehdr, shdr, SHSTRNDX(ehdr)));
-	if (is_not_in_memory(ehdr, f_size, shtab))
-		return true;
-	while (i <= SHNUM(ehdr)) {
-		if (IS32(ehdr) &&
-			is_not_in_memory(ehdr, f_size, &((SHdr32 *)shdr)[i]))
+	while (i < SHNUM(ehdr)) {
+		if (IS32(ehdr) && is_not_in_memory(ehdr, f_size,
+			(char *)&((SHdr32 *)shdr)[i] + sizeof(SHdr32)))
 			return true;
-		if (IS64(ehdr) &&
-			is_not_in_memory(ehdr, f_size, &((SHdr64 *)shdr)[i]))
+		if (IS64(ehdr) && is_not_in_memory(ehdr, f_size,
+			(char *)&((SHdr64 *)shdr)[i] + sizeof(SHdr64)))
 			return true;
-		if (is_not_in_memory(ehdr, f_size,
-			&shtab[SHNAME(ehdr, shdr, i)]))
-			return true;
-		if (is_not_in_memory(ehdr, f_size,
-			(char *)ehdr + (SHOFFSET(ehdr, shdr, i)) +
-				SHSIZE(ehdr, shdr, i)))
+		if ((unsigned int)SHOFFSET(ehdr, shdr, i) +
+			(unsigned int)SHSIZE(ehdr, shdr, i) > f_size &&
+			SHTYPE(ehdr, shdr, i) != SHT_NOBITS)
 			return true;
 		i++;
 	}

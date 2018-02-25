@@ -10,10 +10,18 @@
 #include "objdump.h"
 #include "flag.h"
 
-const t_message flags[] = {{HAS_RELOC, "HAS_RELOC"}, {EXEC_P, "EXEC_P"},
-	{HAS_SYMS, "HAS_SYMS"}, {HAS_DEBUG, "HAS_DEBUG"}, {DYNAMIC, "DYNAMIC"},
-	{D_PAGED, "D_PAGED"}, {HAS_LINENO, "HAS_LINENO"},
-	{HAS_LOCALS, "HAS_LOCALS"}, {WP_TEXT, "WP_TEXT"}, {-1, NULL}};
+const t_message flags[] = {
+	{HAS_RELOC, "HAS_RELOC"},
+	{EXEC_P, "EXEC_P"},
+	{HAS_SYMS, "HAS_SYMS"},
+	{HAS_DEBUG, "HAS_DEBUG"},
+	{DYNAMIC, "DYNAMIC"},
+	{D_PAGED, "D_PAGED"},
+	{HAS_LINENO, "HAS_LINENO"},
+	{HAS_LOCALS, "HAS_LOCALS"},
+	{WP_TEXT, "WP_TEXT"},
+	{-1, NULL}
+};
 
 static bool hasrela(void *ehdr, void *shdr, char const *shtab,
 	unsigned int shnum
