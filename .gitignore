@@ -38,3 +38,5 @@ y
 z
 my_objdump
 my_nm
+*.gcda
+*.gcov

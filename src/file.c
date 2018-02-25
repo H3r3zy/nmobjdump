@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "objdump.h"
 
-bool is_file(const char *name)
+bool is_file(const char *const name)
 {
 	DIR *directory = opendir(name);
 
@@ -29,22 +29,24 @@ static bool is_not_in_memory(void *ehdr, long int f_size, void *test)
 
 bool is_truncated(void *ehdr, void *shdr, long int f_size)
 {
-	int i = 0;
+	int i = SHNUM(ehdr) - 1;
 
 	if (is_not_in_memory(ehdr, f_size, shdr))
 		return true;
+	if (IS32(ehdr) && is_not_in_memory(ehdr, f_size,
+		(char *)&((SHdr32 *)shdr)[i] + sizeof(SHdr32)))
+		return true;
+	if (IS64(ehdr) && is_not_in_memory(ehdr, f_size,
+		(char *)&((SHdr64 *)shdr)[i] + sizeof(SHdr64)))
+		return true;
+	if ((unsigned int)SHOFFSET(ehdr, shdr, i) +
+		(unsigned int)SHSIZE(ehdr, shdr, i) > f_size &&
+		SHTYPE(ehdr, shdr, i) != SHT_NOBITS)
+		return true;
+	/*
 	while (i < SHNUM(ehdr)) {
-		if (IS32(ehdr) && is_not_in_memory(ehdr, f_size,
-			(char *)&((SHdr32 *)shdr)[i] + sizeof(SHdr32)))
-			return true;
-		if (IS64(ehdr) && is_not_in_memory(ehdr, f_size,
-			(char *)&((SHdr64 *)shdr)[i] + sizeof(SHdr64)))
-			return true;
-		if ((unsigned int)SHOFFSET(ehdr, shdr, i) +
-			(unsigned int)SHSIZE(ehdr, shdr, i) > f_size &&
-			SHTYPE(ehdr, shdr, i) != SHT_NOBITS)
-			return true;
+
 		i++;
-	}
+	}*/
 	return false;
 }

@@ -9,6 +9,8 @@ NAME1 	=	my_objdump
 
 NAME2	=	my_nm
 
+NAME3	=	my_readelf
+
 CC	=	gcc
 
 RM	=	rm -rf
@@ -37,6 +39,14 @@ NMSRC	=	src/nm/nm.c	\
 
 NMOBJ	=	$(NMSRC:.c=.o)
 
+READELFSRC	=	src/file.c	\
+			src/utils.c	\
+			src/readelf/readelf.c	\
+			src/readelf/dump/dump.c	\
+			src/readelf/dump/header.c
+
+READELFOBJ	=	$(READELFSRC:.c=.o)
+
 CFLAGS	=	-I include
 CFLAGS	+=	-W -Wall -Wextra
 
@@ -48,15 +58,26 @@ $(NAME1):	$(OBJOBJ)
 $(NAME2):	$(NMOBJ)
 	$(CC) $(NMOBJ) -o $(NAME2) $(CFLAGS)
 
+$(NAME3):	$(READELFOBJ)
+	$(CC) $(READELFOBJ) -o $(NAME3) $(CFLAGS)
+
 objdump:	$(NAME1)
 
 nm:	$(NAME2)
 
+readelf:	$(NAME3)
+
 clean:
-	$(RM) $(OBJOBJ) $(NMOBJ)
+	$(RM) $(OBJOBJ) $(NMOBJ) $(READELFOBJ)
+	$(RM) $(shell find . -type f -name "*.html")
+	$(RM) $(shell find . -type f -name "*.png")
+	$(RM) $(shell find . -type f -name "*.css")
+	$(RM) $(shell find . -type f -name "*.gcda")
+	$(RM) $(shell find . -type f -name "*.gcno")
+	$(RM) app.info
 
 fclean: clean
-	$(RM) $(NAME1) $(NAME2)
+	$(RM) $(NAME1) $(NAME2) $(NAME3)
 
 re: fclean all
 
@@ -64,8 +85,8 @@ debug: CFLAGS += -ggdb3
 
 debug: re
 
-32: CFLAGS += -m32
+test: CFLAGS += -lgcov --coverage
 
-32: re
+test: re
 
-.PHONY: all clean fclean re debug $(NAME1) $(NAME2) nm objdump 32
+.PHONY: all clean fclean re debug $(NAME1) $(NAME2) $(NAME3) nm objdump test readelf

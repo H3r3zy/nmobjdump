@@ -31,7 +31,7 @@ static void dump_symbol(void const *const ehdr, void const *const shdr,
 			printf("                 ");
 	} else {
 		if ((value || tolower(type) == 'b') && tolower(type) != 'u')
-			printf("%06lx ", value);
+			printf("%08lx ", value);
 		else
 			printf("         ");
 	}

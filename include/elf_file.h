@@ -21,12 +21,20 @@ typedef Elf32_Ehdr EHdr32;
 typedef Elf64_Ehdr EHdr64;
 
 /*
-** Elf_Sddr
+** Elf_Shdr
 */
 
 typedef Elf32_Shdr SHdr32;
 
 typedef Elf64_Shdr SHdr64;
+
+/*
+** Elf_Phdr
+*/
+
+typedef Elf32_Phdr PHdr32;
+
+typedef Elf64_Phdr PHdr64;
 
 /*
 ** Elf_Sym
@@ -81,6 +89,11 @@ lseek(fd, 0, SEEK_END)
 #define CONTENT(data, offset)        \
 (((char *) (data)) + (offset))
 
+#define IDENT(ehdr, idx) \
+(IS32(ehdr) ? \
+(((EHdr32 *)(ehdr))->e_ident[idx]) : \
+(((EHdr64 *)(ehdr))->e_ident[idx]))
+
 /*
 ** Elf Value
 */
@@ -125,6 +138,21 @@ lseek(fd, 0, SEEK_END)
 (((EHdr32 *)(ehdr))->e_shstrndx) : \
 (((EHdr64 *)(ehdr))->e_shstrndx))
 
+#define VERSION(ehdr) \
+((IS32(ehdr)) ? \
+(((EHdr32 *)(ehdr))->e_version) : \
+(((EHdr64 *)(ehdr))->e_version))
+
+#define PHOFF(ehdr) \
+((IS32(ehdr)) ? \
+(((EHdr32 *)(ehdr))->e_phoff) : \
+(((EHdr64 *)(ehdr))->e_phoff))
+
+#define FLAGS(ehdr) \
+((IS32(ehdr)) ? \
+(((EHdr32 *)(ehdr))->e_flags) : \
+(((EHdr64 *)(ehdr))->e_flags))
+
 /*
 ** SHDR
 */
@@ -168,6 +196,20 @@ lseek(fd, 0, SEEK_END)
 ((IS32(ehdr)) ? \
 (((SHdr32 *)(shdr))[idx].sh_link) : \
 (((SHdr64 *)(shdr))[idx].sh_link))
+
+#define SIZEOFSHDR(ehdr) \
+((IS32(ehdr)) ? \
+(sizeof(SHdr32)) : \
+(sizeof(SHdr64)))
+
+/*
+** PHDR
+*/
+
+#define SIZEOFPHDR(ehdr) \
+((IS32(ehdr)) ? \
+(sizeof(PHdr32)) : \
+(sizeof(PHdr64)))
 
 /*
 ** Elf_Sym
