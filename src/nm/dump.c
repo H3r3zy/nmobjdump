@@ -25,12 +25,14 @@ static void dump_symbol(void const *const ehdr, void const *const shdr,
 	long unsigned int value = STVALUE(ehdr, symbol);
 
 	if (IS64(ehdr) == true) {
-		if ((value || tolower(type) == 'b') && tolower(type) != 'u')
+		if ((value || tolower(type) == 'b' || tolower(type) == 't')
+			&& tolower(type) != 'u')
 			printf("%016lx ", value);
 		else
 			printf("                 ");
 	} else {
-		if ((value || tolower(type) == 'b') && tolower(type) != 'u')
+		if ((value || tolower(type) == 'b' || tolower(type) == 't')
+			&& tolower(type) != 'u')
 			printf("%08lx ", value);
 		else
 			printf("         ");
