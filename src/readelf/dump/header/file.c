@@ -25,7 +25,7 @@
 ** ELFOSABI_STANDALONE Stand-alone (embedded) ABI.
 */
 
-static const t_message os_abi[] = {
+static const t_message OS_ABI[] = {
 	{ELFOSABI_SYSV, "Unix - System V"},
 	{ELFOSABI_HPUX, "HP-UX - ABI"},
 	{ELFOSABI_NETBSD, "NetBSD - ABI"},
@@ -50,7 +50,7 @@ static const t_message os_abi[] = {
 **
 */
 
-static const t_message types[] = {
+static const t_message TYPES[] = {
 	{ET_NONE, "NONE (Unknown type)"},
 	{ET_REL, "REL (Relocatable file)"},
 	{ET_EXEC, "EXEC (Executable file)"},
@@ -85,7 +85,7 @@ static const t_message types[] = {
 **
 */
 
-static const t_message machines[] = {
+static const t_message MACHINES[] = {
 	{EM_NONE, "Unknown machine"},
 	{EM_M32, "AT&T WE 32100"},
 	{EM_SPARC, "Sun Microsystems SPARC"},
@@ -107,19 +107,6 @@ static const t_message machines[] = {
 	{EM_VAX, "DEC Vax"},
 	{-1, NULL}
 };
-
-/*
-** Print data in function of a value and a tab
-** tab[]: {int id, char *name}
-** value == id > print name
-*/
-static void print_with_tab(int value, t_message const *const tab) {
-	for (unsigned int i = 0; tab[i].name; i++) {
-		if (tab[i].id == value)
-			printf("%s", tab[i].name);
-	}
-
-}
 
 /*
 **  Entry point address:               0x400700
@@ -176,13 +163,13 @@ void dump_header(void const *const ehdr)
 	printf("\n  Data:                              %s", DATAINFO(ehdr));
 	printf("\n  Version:                           %s", VERSIONINFO(ehdr));
 	printf("\n  OS/ABI:                            ");
-	print_with_tab(IDENT(ehdr, EI_OSABI), os_abi);
+	print_with_tab(IDENT(ehdr, EI_OSABI), OS_ABI, 0);
 	printf("\n  ABI Version:                       %i", IDENT(ehdr,
 		EI_ABIVERSION));
 	printf("\n  Type:                              ");
-	print_with_tab(TYPE(ehdr), types);
+	print_with_tab(TYPE(ehdr), TYPES, 0);
 	printf("\n  Machine:                           ");
-	print_with_tab(MACHINE(ehdr), machines);
+	print_with_tab(MACHINE(ehdr), MACHINES, 0);
 	printf("\n  Version:                           0x%x", VERSION(ehdr));
 	dump_header_part_2(ehdr);
 }

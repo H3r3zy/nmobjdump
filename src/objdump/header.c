@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include "objdump.h"
 
-static const char * const elf64 = "elf64-x86-64";
+static const char *const ELF64 = "elf64-x86-64";
 
-static const char * const elf32 = "elf32-i386";
+static const char *const ELF32 = "elf32-i386";
 
-static const t_message machines[] = {
+static const t_message MACHINES[] = {
 	{EM_NONE, "None"},
 	{EM_M32, "WE32100"},
 	{EM_SPARC, "Sparc"},
@@ -39,13 +39,13 @@ void dump_header(void *ehdr, void *shdr, char const *shtab,
 )
 {
 	long int flag = flag_gestion(ehdr, shdr, shtab);
-	const char *const format = (IS64(ehdr)) ? (elf64) : (elf32);
+	const char *const format = (IS64(ehdr)) ? (ELF64) : (ELF32);
 
 	printf("\n%s:     file format %s\n", filename, format);
 	printf("architecture: ");
-	for (int i = 0; machines[i].name; i++) {
-		if (MACHINE(ehdr) == machines[i].id)
-			printf("%s", machines[i].name);
+	for (int i = 0; MACHINES[i].name; i++) {
+		if (MACHINE(ehdr) == MACHINES[i].id)
+			printf("%s", MACHINES[i].name);
 	}
 	printf(", flags 0x%08lx:\n", flag);
 	dump_flag(flag);

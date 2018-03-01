@@ -10,7 +10,7 @@
 #include "objdump.h"
 #include "flag.h"
 
-static const t_message flags[] = {
+static const t_message FLAGSTAB[] = {
 	{HAS_RELOC, "HAS_RELOC"},
 	{EXEC_P, "EXEC_P"},
 	{HAS_SYMS, "HAS_SYMS"},
@@ -79,11 +79,11 @@ void dump_flag(long int flag)
 {
 	bool first = true;
 
-	for (unsigned int i = 0; flags[i].name; i++) {
-		if (flag & flags[i].id && first == false)
+	for (unsigned int i = 0; FLAGSTAB[i].name; i++) {
+		if (flag & FLAGSTAB[i].id && first == false)
 			printf(", ");
-		if (flag & flags[i].id) {
-			printf("%s", flags[i].name);
+		if (flag & FLAGSTAB[i].id) {
+			printf("%s", FLAGSTAB[i].name);
 			first = false;
 		}
 	}

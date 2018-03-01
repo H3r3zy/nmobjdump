@@ -126,7 +126,7 @@ then
 fi
 
 echo ""
-echo "Voulez vousavoir un aperçu web? (Y/n)"
+echo "Voulez vous avoir un aperçu web? (Y/n)"
 read r
 
 if [ -z $r ] || ( [ $r == "Y" ] || [ $r == "y" ] )

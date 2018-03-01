@@ -15,9 +15,9 @@ bool is_readonly(void const *const ehdr, void const *const shdr,
 	unsigned int type = SHTYPE(ehdr, shdr, idx);
 	long unsigned int flags = SHFLAGS(ehdr, shdr, idx);
 
-	if (type == SHT_PROGBITS && flags == SHF_ALLOC && ret == unknown)
+	if (type == SHT_PROGBITS && flags == SHF_ALLOC && ret == UNKNOWN)
 		return true;
-	if (flags == 0 && ret == unknown)
+	if (flags == 0 && ret == UNKNOWN)
 		return true;
 	return false;
 }

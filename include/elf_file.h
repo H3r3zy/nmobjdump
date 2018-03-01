@@ -45,6 +45,30 @@ typedef Elf32_Sym Sym32;
 typedef Elf64_Sym Sym64;
 
 /*
+** Elf_Rel
+*/
+
+typedef Elf32_Rel Rel32;
+
+typedef Elf64_Rel Rel64;
+
+/*
+** Elf_Rela
+*/
+
+typedef Elf32_Rela Rela32;
+
+typedef Elf64_Rela Rela64;
+
+/*
+** Elf_Nhdr
+*/
+
+typedef Elf32_Nhdr NHdr32;
+
+typedef Elf64_Nhdr NHdr64;
+
+/*
 ** Verif
 */
 
@@ -202,6 +226,21 @@ lseek(fd, 0, SEEK_END)
 (sizeof(SHdr32)) : \
 (sizeof(SHdr64)))
 
+#define SHENTSIZE(ehdr, shdr, idx) \
+((IS32(ehdr)) ? \
+(((SHdr32 *)(shdr))[idx].sh_entsize) : \
+(((SHdr64 *)(shdr))[idx].sh_entsize))
+
+#define SHINFO(ehdr, shdr, idx) \
+((IS32(ehdr)) ? \
+(((SHdr32 *)(shdr))[idx].sh_info) : \
+(((SHdr64 *)(shdr))[idx].sh_info))
+
+#define SHADDRALIGN(ehdr, shdr, idx) \
+((IS32(ehdr)) ? \
+(((SHdr32 *)(shdr))[idx].sh_addralign) : \
+(((SHdr64 *)(shdr))[idx].sh_addralign))
+
 /*
 ** PHDR
 */
@@ -255,8 +294,159 @@ lseek(fd, 0, SEEK_END)
 (((Sym32 *)(symbol))->st_info) : \
 (((Sym64 *)(symbol))->st_info))
 
+#define STOTHER(ehdr, symbol) \
+((IS32(ehdr)) ? \
+(((Sym32 *)(symbol))->st_other) : \
+(((Sym64 *)(symbol))->st_other))
+
 #define SECTIONNAME(ehdr, shdr, symbol) \
 (&(((char *)(ehdr) + SHOFFSET(ehdr, shdr, SHSTRNDX(ehdr))) \
 [SHNAME(ehdr, shdr, STSHNDX(ehdr, symbol))]))
+
+/*
+** Elf_Rel
+*/
+
+#define RELOFFSET(ehdr, rel) \
+((IS32(ehdr)) ? \
+(((Rel32 *)(rel))->r_offset) : \
+(((Rel64 *)(rel))->r_offset))
+
+#define RELINFO(ehdr, rel) \
+((IS32(ehdr)) ? \
+(((Rel32 *)(rel))->r_info) : \
+(((Rel64 *)(rel))->r_info))
+
+#define RELSIZEOF(ehdr) \
+((IS32(ehdr)) ? \
+(sizeof(Rel32)) : \
+(sizeof(Rel64)))
+
+#define RELTYPE(ehdr, info) \
+((IS32(ehdr)) ? \
+(ELF32_R_TYPE(info)) : \
+(ELF64_R_TYPE(info)))
+
+/*
+** Elf_Rela
+*/
+
+#define RELAOFFSET(ehdr, rel) \
+((IS32(ehdr)) ? \
+(((Rela32 *)(rel))->r_offset) : \
+(((Rela64 *)(rel))->r_offset))
+
+#define RELAINFO(ehdr, rel) \
+((IS32(ehdr)) ? \
+(((Rela32 *)(rel))->r_info) : \
+(((Rela64 *)(rel))->r_info))
+
+#define RELAADDEND(ehdr, rel) \
+((IS32(ehdr)) ? \
+(((Rela32 *)(rel))->r_addend) : \
+(((Rela64 *)(rel))->r_addend))
+
+#define RELASIZEOF(ehdr) \
+((IS32(ehdr)) ? \
+(sizeof(Rela32)) : \
+(sizeof(Rela64)))
+
+/*
+** Elf_Rel / Elf_Rela
+*/
+
+
+#define RSYM(ehdr, info) \
+((IS32(ehdr)) ? \
+(ELF32_R_SYM(info)) : \
+(ELF64_R_SYM(info)))
+
+#define RINFO(ehdr, shdr, i, rel) \
+((SHTYPE(ehdr, shdr, i) == SHT_RELA) ? \
+(RELAINFO(ehdr, rel)) : \
+(RELINFO(ehdr, rel)))
+
+#define RSIZEOF(ehdr, shdr, i) \
+((SHTYPE(ehdr, shdr, i) == SHT_RELA) ? \
+(RELASIZEOF(ehdr)) : \
+(RELSIZEOF(ehdr)))
+
+#define ROFFSET(ehdr, shdr, i, rel) \
+((SHTYPE(ehdr, shdr, i) == SHT_RELA) ? \
+(RELAOFFSET(ehdr, rel)) : \
+(RELOFFSET(ehdr, rel)))
+
+#define RADDEND(ehdr, shdr, i, rel) \
+((SHTYPE(ehdr, shdr, i) == SHT_RELA) ? \
+(RELAADDEND(ehdr, rel)): \
+(0))
+
+/*
+** Elf_Phdr
+*/
+
+#define PHTYPE(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_type) : \
+(((PHdr64 *)(phdr))[i].p_type))
+
+#define PHOFFSET(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_offset) : \
+(((PHdr64 *)(phdr))[i].p_offset))
+
+#define PHFLAGS(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_flags) : \
+(((PHdr64 *)(phdr))[i].p_flags))
+
+#define PHVADDR(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_vaddr) : \
+(((PHdr64 *)(phdr))[i].p_vaddr))
+
+#define PHPADDR(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_paddr) : \
+(((PHdr64 *)(phdr))[i].p_paddr))
+
+#define PHFILESZ(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_filesz) : \
+(((PHdr64 *)(phdr))[i].p_filesz))
+
+#define PHMEMSZ(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_memsz) : \
+(((PHdr64 *)(phdr))[i].p_memsz))
+
+#define PHALIGN(ehdr, phdr, i) \
+((IS32(ehdr)) ? \
+(((PHdr32 *)(phdr))[i].p_align) : \
+(((PHdr64 *)(phdr))[i].p_align))
+
+/*
+** Elf_Nhdr
+*/
+
+#define NSIZEOF(ehdr) \
+((IS32(ehdr)) ? \
+(sizeof(NHdr32)) : \
+(sizeof(NHdr64)))
+
+#define NNAMESZ(ehdr, note) \
+((IS32(ehdr)) ? \
+(((NHdr32 *)(note))->n_namesz) : \
+(((NHdr64 *)(note))->n_namesz))
+
+#define NDESCSZ(ehdr, note) \
+((IS32(ehdr)) ? \
+(((NHdr32 *)(note))->n_descsz) : \
+(((NHdr64 *)(note))->n_descsz))
+
+#define NTYPE(ehdr, note) \
+((IS32(ehdr)) ? \
+(((NHdr32 *)(note))->n_type) : \
+(((NHdr64 *)(note))->n_type))
 
 #endif //PSU_2017_NMOBJDUMP_ELF_FILE_H

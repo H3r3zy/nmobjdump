@@ -12,7 +12,7 @@ bool is_common(void const *const ehdr,
 	void const *const symbol, unsigned int ret
 )
 {
-	if (STSHNDX(ehdr, symbol) == SHN_COMMON && ret == unknown)
+	if (STSHNDX(ehdr, symbol) == SHN_COMMON && ret == UNKNOWN)
 		return true;
 	return false;
 }

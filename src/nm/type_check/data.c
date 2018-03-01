@@ -16,9 +16,9 @@ bool is_data(void const *const ehdr, void const *const shdr,
 	long unsigned int flags = SHFLAGS(ehdr, shdr, idx);
 
 	if (type == SHT_PROGBITS && flags == (SHF_ALLOC | SHF_WRITE) &&
-		ret == unknown)
+		ret == UNKNOWN)
 		return true;
-	if ((type & SHT_NOBITS) == 0 && ret == unknown)
+	if ((type & SHT_NOBITS) == 0 && ret == UNKNOWN)
 		return true;
 	return false;
 }

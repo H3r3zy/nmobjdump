@@ -17,7 +17,7 @@ bool is_bss(void const *const ehdr, void const *const shdr,
 	const char *const sh_name = SECTIONNAME(ehdr, shdr, symbol);
 
 	if (type == SHT_NOBITS && flags == (SHF_ALLOC | SHF_WRITE) &&
-		ret == unknown)
+		ret == UNKNOWN)
 		return true;
 	if (0 == strncmp(sh_name, ".bss", 4) ||
 		0 == strncmp(sh_name, ".tbss", 5))

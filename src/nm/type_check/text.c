@@ -17,7 +17,7 @@ bool is_text(void const *const ehdr, void const *const shdr,
 	char const *const sh_name = SECTIONNAME(ehdr, shdr, symbol);
 
 	if (type == SHT_PROGBITS && flags == (SHF_ALLOC | SHF_EXECINSTR) &&
-		ret == unknown)
+		ret == UNKNOWN)
 		return true;
 	if (0 == strncmp(sh_name, ".init", 5) ||
 		0 == strncmp(sh_name, ".fini", 5) ||

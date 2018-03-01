@@ -8,9 +8,9 @@
 #include <ctype.h>
 #include <nm.h>
 
-const unsigned int unknown = '?';
+const unsigned int UNKNOWN = '?';
 
-static const type types[] = {
+static const type TYPES[] = {
 	{'u', &is_undefined},
 	{'c', &is_common},
 	{'a', &is_absolute},
@@ -35,8 +35,8 @@ unsigned int get_type(void const *const ehdr, void const *const shdr,
 	}
 	if (STSHNDX(ehdr, symbol) == SHN_UNDEF)
 		return (STBIND(ehdr, symbol) == STB_GLOBAL) ? 'U' : 'u';
-	for (int i = 0; types[i].key != unknown; i++) {
-		ret = types[i].func(ehdr, shdr, symbol, ret) ? types[i].key :
+	for (int i = 0; TYPES[i].key != UNKNOWN; i++) {
+		ret = TYPES[i].func(ehdr, shdr, symbol, ret) ? TYPES[i].key :
 			ret;
 	}
 	return STBIND(ehdr, symbol) == STB_GLOBAL

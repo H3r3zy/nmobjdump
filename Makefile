@@ -43,7 +43,8 @@ READELFSRC	=	src/file.c	\
 			src/utils.c	\
 			src/readelf/readelf.c	\
 			src/readelf/dump/dump.c	\
-			src/readelf/dump/header.c
+			src/readelf/dump/file_header.c \
+			src/readelf/dump/sections.c
 
 READELFOBJ	=	$(READELFSRC:.c=.o)
 

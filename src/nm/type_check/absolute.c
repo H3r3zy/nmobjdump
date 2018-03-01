@@ -12,7 +12,7 @@ bool is_absolute(void const *const ehdr,
 	void const *const symbol, unsigned int ret
 )
 {
-	if (STSHNDX(ehdr, symbol) == SHN_ABS && ret == unknown)
+	if (STSHNDX(ehdr, symbol) == SHN_ABS && ret == UNKNOWN)
 		return true;
 	return false;
 }

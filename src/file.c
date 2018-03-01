@@ -7,6 +7,8 @@
 
 #include <dirent.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/mman.h>
 #include "objdump.h"
 
 bool is_file(const char *const name)
@@ -43,10 +45,16 @@ bool is_truncated(void *ehdr, void *shdr, long int f_size)
 		(unsigned int)SHSIZE(ehdr, shdr, i) > f_size &&
 		SHTYPE(ehdr, shdr, i) != SHT_NOBITS)
 		return true;
-	/*
-	while (i < SHNUM(ehdr)) {
-
-		i++;
-	}*/
 	return false;
+}
+
+
+void *get_data(int fd)
+{
+	void *data = NULL;
+
+	if (fd == -1)
+		return NULL;
+	data = mmap(NULL, FILESIZE(fd), PROT_READ, MAP_SHARED, fd, 0);
+	return data;
 }

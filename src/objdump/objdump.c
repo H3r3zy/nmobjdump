@@ -11,13 +11,13 @@
 #include <fcntl.h>
 #include <objdump.h>
 
-const int error_return = 84;
+static const int ERROR_RETURN = 84;
 
-const int success_return = 0;
+static const int SUCCESS_RETURN = 0;
 
-const char *const default_file = "a.out";
+static const char *const DEFAULT_FILE = "a.out";
 
-const t_message messages[] = {{SUCCESS, "Success"},
+static const t_message MESSAGES[] = {{SUCCESS, "Success"},
 	{DIRECTORY, "%s: Warning: '%s' is a directory\n"},
 	{NOT_RECOGNIZED, "%s: %s: File format not recognized\n"},
 	{TRUNCATED, "%s: %s: File truncated\n"},
@@ -28,8 +28,8 @@ static int dump_error(errors error, int return_value, char const *const av0,
 )
 {
 	if (error) {
-		fprintf(stderr, messages[error].name, av0, filename);
-		return_value = error_return;
+		fprintf(stderr, MESSAGES[error].name, av0, filename);
+		return_value = ERROR_RETURN;
 	}
 	return return_value;
 }
@@ -61,7 +61,7 @@ static errors manage_file(char const *const filename)
 int main(int ac, char **av)
 {
 	int i = 1;
-	int r_value = success_return;
+	int r_value = SUCCESS_RETURN;
 	errors error;
 
 	if (ac > i) {
@@ -71,8 +71,8 @@ int main(int ac, char **av)
 			i++;
 		}
 	} else {
-		error = manage_file(default_file);
-		r_value = dump_error(error, r_value, av[0], default_file);
+		error = manage_file(DEFAULT_FILE);
+		r_value = dump_error(error, r_value, av[0], DEFAULT_FILE);
 	}
 	return (r_value);
 }

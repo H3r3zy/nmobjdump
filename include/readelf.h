@@ -15,8 +15,22 @@
 ** Dump
 */
 
-void dump_elf(void const *const ehdr, void const *const shdr);
+void dump_elf(void const *const ehdr, void const *const shdr,
+	void const *const phdr);
 void dump_header(void const *const ehdr);
+void dump_sections(void const *const ehdr, void const *const shdr);
+void print_with_tab(int value, t_message const *const tab, int size);
+void dump_symbols(void const *const ehdr, void const *const shdr);
+void dump_relas(void const *const ehdr, void const *const shdr);
+void dump_programs(void const *const ehdr, void const *const phdr,
+	void const *const shdr);
+void dump_notes_section(void const *const ehdr, void const *const shdr);
+
+/*
+** Utils
+*/
+
+unsigned int calc_int_digits(size_t n);
 
 /*
 ** Errors

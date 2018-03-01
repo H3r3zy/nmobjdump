@@ -12,7 +12,7 @@ bool is_undefined(void const *const ehdr,
 	void const *const symbol, unsigned int ret
 )
 {
-	if (STVALUE(ehdr, symbol) == 0 && ret == unknown)
+	if (STVALUE(ehdr, symbol) == 0 && ret == UNKNOWN)
 		return true;
 	return false;
 }
